@@ -23,7 +23,7 @@ void writeHeader(std::ofstream& outFile, const std::string& inputName);
 /**
  * @param outFile File stream to write to.
  */
-void writeData(std::ofstream& outFile);
+void writeData(std::ofstream& outFile, const std::string& inputName, const char* fileContents, unsigned int fileLength);
 
 /// Write footer.
 /**
@@ -31,11 +31,25 @@ void writeData(std::ofstream& outFile);
  */
 void writeFooter(std::ofstream& outFile);
 
+/// Get variable name.
+/**
+ * @param inputName Input file name.
+ * @return The variable name
+ */
+std::string variableName(std::string inputName);
+
 /// Get include guard name.
 /**
  * @param inputName Input file name.
  * @return The include guard name for the file
  */
 std::string includeGuard(std::string inputName);
+
+/// Convert char to hex-string.
+/**
+ * @param character The char to convert.
+ * @return Hex-string with the value of the char
+ */
+std::string charToHex(char character);
 
 #endif

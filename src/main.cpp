@@ -2,6 +2,7 @@
 
 #include <cstring>
 #include <iostream>
+#include <sstream>
 #include <locale>
 
 using namespace std;
@@ -24,9 +25,9 @@ int main(int argc, const char* argv[]) {
         outputName = inputName + ".hzz";
     
     // Read input file.
-    ifstream inFile(inputName.c_str(), ios::binary);
+    ifstream inFile(inputName.c_str(), ios::binary | ios::ate);
     char* buffer;
-    int size;
+    unsigned int size;
     if (inFile.is_open()) {
         size = inFile.tellg();
         buffer = new char[size];
@@ -43,7 +44,7 @@ int main(int argc, const char* argv[]) {
     ofstream outFile(outputName.c_str(), ios::trunc);
     if (outFile.is_open()) {
         writeHeader(outFile, inputName);
-        writeData(outFile);
+        writeData(outFile, inputName, buffer, size);
         writeFooter(outFile);
         
         outFile.close();
@@ -59,15 +60,24 @@ void writeHeader(ofstream& outFile, const string& inputName) {
             << "#define " << includeGuard(inputName) << endl << endl;
 }
 
-void writeData(ofstream& outFile) {
-    /// @todo: Write data
+void writeData(ofstream& outFile, const string& inputName, const char* fileContents, unsigned int fileLength) {
+    outFile << "const char* " << variableName(inputName) << " = { ";
+    
+    for (unsigned int i=0; i<fileLength; i++) {
+        outFile << charToHex(fileContents[i]);
+        if (i < fileLength-1)
+            outFile << ", ";
+    }
+    
+    outFile << " };" << endl
+            << "const unsigned int " << variableName(inputName) << "_LENGTH = " << fileLength << ";" << endl;
 }
 
 void writeFooter(ofstream& outFile) {
     outFile << endl << "#endif" << endl;
 }
 
-string includeGuard(string inputName) {
+string variableName(string inputName) {
     // Convert to upper case and replace . with _.
     for (string::size_type i=0; i<inputName.length(); i++) {
         inputName[i] = toupper(inputName[i]);
@@ -75,5 +85,16 @@ string includeGuard(string inputName) {
             inputName[i] = '_';
     }
     
-    return inputName + "_HZZ";
+    return inputName;
+}
+
+string includeGuard(string inputName) {
+    return variableName(inputName) + "_HZZ";
+}
+
+string charToHex(char character) {
+    string result = "0x";
+    ostringstream convert;
+    convert << static_cast<int>(character / 16) << static_cast<int>(character % 16);
+    return result + convert.str();
 }
