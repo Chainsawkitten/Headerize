@@ -64,7 +64,7 @@ void writeData(ofstream& outFile) {
 }
 
 void writeFooter(ofstream& outFile) {
-    /// @todo: Write footer
+    outFile << endl << "#endif" << endl;
 }
 
 string includeGuard(string inputName) {
