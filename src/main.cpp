@@ -2,7 +2,7 @@
 
 #include <cstring>
 #include <iostream>
-#include <string>
+#include <locale>
 
 using namespace std;
 
@@ -42,7 +42,7 @@ int main(int argc, const char* argv[]) {
     // Write output file.
     ofstream outFile(outputName.c_str(), ios::trunc);
     if (outFile.is_open()) {
-        writeHeader(outFile);
+        writeHeader(outFile, inputName);
         writeData(outFile);
         writeFooter(outFile);
         
@@ -54,8 +54,9 @@ int main(int argc, const char* argv[]) {
     return 0;
 }
 
-void writeHeader(ofstream& outFile) {
-    /// @todo: Write header
+void writeHeader(ofstream& outFile, const string& inputName) {
+    outFile << "#ifndef " << includeGuard(inputName) << endl
+            << "#define " << includeGuard(inputName) << endl << endl;
 }
 
 void writeData(ofstream& outFile) {
@@ -64,4 +65,15 @@ void writeData(ofstream& outFile) {
 
 void writeFooter(ofstream& outFile) {
     /// @todo: Write footer
+}
+
+string includeGuard(string inputName) {
+    // Convert to upper case and replace . with _.
+    for (string::size_type i=0; i<inputName.length(); i++) {
+        inputName[i] = toupper(inputName[i]);
+        if (inputName[i] == '.')
+            inputName[i] = '_';
+    }
+    
+    return inputName + "_HZZ";
 }
