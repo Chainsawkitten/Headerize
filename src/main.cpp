@@ -61,7 +61,7 @@ void writeHeader(ofstream& outFile, const string& inputName) {
 }
 
 void writeData(ofstream& outFile, const string& inputName, const char* fileContents, unsigned int fileLength) {
-    outFile << "const char* " << variableName(inputName) << " = { ";
+    outFile << "const char " << variableName(inputName) << "[] = { ";
     
     for (unsigned int i=0; i<fileLength; i++) {
         outFile << charToHex(fileContents[i]);
