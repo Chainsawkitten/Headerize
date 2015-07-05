@@ -99,6 +99,6 @@ string includeGuard(string inputName) {
 string charToHex(char character) {
     string result = "0x";
     ostringstream convert;
-    convert << static_cast<int>(character / 16) << static_cast<int>(character % 16);
+    convert << std::hex << static_cast<int>(character);
     return result + convert.str();
 }
