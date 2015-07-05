@@ -78,6 +78,10 @@ void writeFooter(ofstream& outFile) {
 }
 
 string variableName(string inputName) {
+    // Get base filename.
+    std::size_t found = inputName.find_last_of("/\\");
+    inputName = inputName.substr(found+1);
+    
     // Convert to upper case and replace . with _.
     for (string::size_type i=0; i<inputName.length(); i++) {
         inputName[i] = toupper(inputName[i]);
