@@ -74,7 +74,9 @@ void writeHeader(ofstream& outFile, const string& inputName) {
 }
 
 void writeSource(ofstream& outFile, const string& inputName, const string& outputName, const char* fileContents, unsigned int fileLength) {
-    outFile << "#include \"" << outputName << ".hpp\"" << endl << endl;
+    // Get base filename.
+    std::size_t found = outputName.find_last_of("/\\");
+    outFile << "#include \"" << outputName.substr(found+1) << ".hpp\"" << endl << endl;
     
     outFile << "const char " << variableName(inputName) << "[] = { ";
     
