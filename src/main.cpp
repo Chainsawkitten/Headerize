@@ -10,7 +10,7 @@ using namespace std;
 int main(int argc, const char* argv[]) {
     // Print help
     if (argc == 1 || strcmp(argv[0], "--help") == 0) {
-        cout << "Headerize is a tool to convert resource files to headers for inclusion in C/C++ projects." << endl
+        cout << "Headerize is a tool to convert resource files to headers and source files for inclusion in C++ projects." << endl
              << "Usage:" << endl
              << "Headerize input output" << endl;
         return 0;
@@ -22,7 +22,7 @@ int main(int argc, const char* argv[]) {
     if (argc > 2)
         outputName = argv[2];
     else
-        outputName = inputName + ".hzz";
+        outputName = inputName;
     
     // Read input file.
     ifstream inFile(inputName.c_str(), ios::binary | ios::ate);
@@ -40,14 +40,22 @@ int main(int argc, const char* argv[]) {
         return 1;
     }
     
-    // Write output file.
-    ofstream outFile(outputName.c_str(), ios::trunc);
-    if (outFile.is_open()) {
-        writeHeader(outFile, inputName);
-        writeData(outFile, inputName, buffer, size);
-        writeFooter(outFile);
+    // Write header file.
+    ofstream headerFile((outputName + ".hpp").c_str(), ios::trunc);
+    if (headerFile.is_open()) {
+        writeHeader(headerFile, inputName);
         
-        outFile.close();
+        headerFile.close();
+    } else {
+        cout << "Couldn't open " << outputName << " for writing." << endl;
+    }
+    
+    // Write source file.
+    ofstream sourceFile((outputName + ".cpp").c_str(), ios::trunc);
+    if (sourceFile.is_open()) {
+        writeSource(sourceFile, inputName, outputName, buffer, size);
+        
+        sourceFile.close();
     } else {
         cout << "Couldn't open " << outputName << " for writing." << endl;
     }
@@ -58,9 +66,16 @@ int main(int argc, const char* argv[]) {
 void writeHeader(ofstream& outFile, const string& inputName) {
     outFile << "#ifndef " << includeGuard(inputName) << endl
             << "#define " << includeGuard(inputName) << endl << endl;
+    
+    outFile << "extern const char " << variableName(inputName) << "[];" << endl;
+    outFile << "extern const unsigned int " << variableName(inputName) << "_LENGTH;" << endl;
+    
+    outFile << endl << "#endif" << endl;
 }
 
-void writeData(ofstream& outFile, const string& inputName, const char* fileContents, unsigned int fileLength) {
+void writeSource(ofstream& outFile, const string& inputName, const string& outputName, const char* fileContents, unsigned int fileLength) {
+    outFile << "#include \"" << outputName << ".hpp\"" << endl << endl;
+    
     outFile << "const char " << variableName(inputName) << "[] = { ";
     
     for (unsigned int i=0; i<fileLength; i++) {
@@ -71,10 +86,6 @@ void writeData(ofstream& outFile, const string& inputName, const char* fileConte
     
     outFile << " };" << endl
             << "const unsigned int " << variableName(inputName) << "_LENGTH = " << fileLength << ";" << endl;
-}
-
-void writeFooter(ofstream& outFile) {
-    outFile << endl << "#endif" << endl;
 }
 
 string variableName(string inputName) {
@@ -93,7 +104,7 @@ string variableName(string inputName) {
 }
 
 string includeGuard(string inputName) {
-    return variableName(inputName) + "_HZZ";
+    return variableName(inputName) + "_HPP";
 }
 
 string charToHex(char character) {

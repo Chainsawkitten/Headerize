@@ -12,24 +12,22 @@
  */
 int main(int argc, const char* argv[]);
 
-/// Write header.
+/// Write header file.
 /**
  * @param outFile File stream to write to.
  * @param inputName Input file name.
  */
 void writeHeader(std::ofstream& outFile, const std::string& inputName);
 
-/// Write data.
+/// Write source file.
 /**
  * @param outFile File stream to write to.
+ * @param inputName Input file name.
+ * @param outputName Output file name.
+ * @param fileContents Contents of the file.
+ * @param fileLength Length of the file.
  */
-void writeData(std::ofstream& outFile, const std::string& inputName, const char* fileContents, unsigned int fileLength);
-
-/// Write footer.
-/**
- * @param outFile File stream to write to.
- */
-void writeFooter(std::ofstream& outFile);
+void writeSource(std::ofstream& outFile, const std::string& inputName, const std::string& outputName, const char* fileContents, unsigned int fileLength);
 
 /// Get variable name.
 /**
