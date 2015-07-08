@@ -81,7 +81,7 @@ void writeSource(ofstream& outFile, const string& inputName, const string& outpu
     outFile << "const char " << variableName(inputName) << "[] = { ";
     
     for (unsigned int i=0; i<fileLength; i++) {
-        outFile << charToHex(fileContents[i]);
+        outFile << +fileContents[i];
         if (i < fileLength-1)
             outFile << ", ";
     }
@@ -107,11 +107,4 @@ string variableName(string inputName) {
 
 string includeGuard(string inputName) {
     return variableName(inputName) + "_HPP";
-}
-
-string charToHex(char character) {
-    string result = "0x";
-    ostringstream convert;
-    convert << std::hex << static_cast<int>(character);
-    return result + convert.str();
 }

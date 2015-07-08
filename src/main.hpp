@@ -43,11 +43,4 @@ std::string variableName(std::string inputName);
  */
 std::string includeGuard(std::string inputName);
 
-/// Convert char to hex-string.
-/**
- * @param character The char to convert.
- * @return Hex-string with the value of the char
- */
-std::string charToHex(char character);
-
 #endif
